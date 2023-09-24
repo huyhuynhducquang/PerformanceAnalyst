@@ -1,0 +1,28 @@
+﻿@{
+    ViewBag.Title = "My Store";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // You can specify your layout page here
+}
+
+<h2>My Store</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product Name</th>
+            <th>SKU</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in (List<Product>)Model)
+        {
+                <tr>
+                <td>@product.Name</td>
+                <td>@product.Sku</td>
+                    <td>
+                    <a asp-controller="Products" asp-action="Details"asp-route-sku="@product.Sku">Details</a>
+                    </td>
+                </tr>
+        }
+    </tbody>
+</table>
