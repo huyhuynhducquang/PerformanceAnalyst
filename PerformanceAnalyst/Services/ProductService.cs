@@ -34,12 +34,13 @@ namespace PerformanceAnalyst.Services
 
             foreach (var product in products)
             {
-                var htmlContent = await FetchHtmlContentOfPageAsync(product.SourceUrl);
+                var htmlContent = await FetchHtmlContentOfPageAsync(product.Link);
                 var price = new ProductPrice()
                 {
                     Price = await GetPriceAsync(htmlContent, product.PriceElement),
                     LogoUrl = await GetLogoUrlAsync(htmlContent),
-                    Link = product.SourceUrl
+                    Link = product.Link,
+                    Store = product.Source.ToString(),
                 };
                 prices.Add(price);
             }
@@ -59,17 +60,10 @@ namespace PerformanceAnalyst.Services
             return Task.FromResult("");
         }
 
-        private Task<decimal> GetPriceAsync(string htmlContent, string priceElement)
+        private Task<string> GetPriceAsync(string htmlContent, string priceElement)
         {
-            Random random = new Random();
-
-            decimal minValue = 1.0m;
-            decimal maxValue = 10.0m;
-
-            // Generate a random decimal number within the specified range
-            decimal randomDecimal = (decimal)random.NextDouble() * (maxValue - minValue) + minValue;
-
-            return Task.FromResult(randomDecimal);
+            Task.Delay(1000);
+            return Task.FromResult(priceElement);
         }
 
         private Task<string> GetLogoUrlAsync(string htmlContent)

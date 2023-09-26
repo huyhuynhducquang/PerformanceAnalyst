@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Prime Numbers Calculator";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form method="post" asp-action="GenerateCircles">
+    <div class="form-group">
+        <label for="minValue">Minimum Value:</label>
+        <input type="number" class="form-control" id="minValue" name="minValue" required>
+    </div>
+    <div class="form-group">
+        <label for="maxValue">Maximum Value:</label>
+        <input type="number" class="form-control" id="maxValue" name="maxValue" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Calculate Primes</button>
+</form>
