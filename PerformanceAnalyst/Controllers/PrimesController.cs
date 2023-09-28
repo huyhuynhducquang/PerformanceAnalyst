@@ -17,7 +17,7 @@ namespace PerformanceAnalyst.Controllers
         }
 
         [HttpPost]
-        public IActionResult GenerateCircles(int minValue, int maxValue)
+        public async Task<IActionResult> GenerateCircles(int minValue, int maxValue)
         {
             var circles = new List<Circle>();
 
@@ -29,7 +29,7 @@ namespace PerformanceAnalyst.Controllers
                     Tooltip = num.ToString(),
                     Color = new Color(128, 128, 128).ToRgbCssString()
                 };
-                if (isPrime(num))
+                if (await isPrime(num))
                     circle.Color = new Color(256, 256, 0).ToRgbCssString();
 
                 circles.Add(circle);
@@ -43,32 +43,33 @@ namespace PerformanceAnalyst.Controllers
             });
         }
 
-        private bool isPrime(int number)
+        private Task<bool> isPrime(int number)
         {
+            Task.Delay(5000);
             if (number <= 1)
             {
-                return false;
+                return Task.FromResult(false);
             }
 
             if (number <= 3)
             {
-                return true;
+                return Task.FromResult(true);
             }
 
             if (number % 2 == 0 || number % 3 == 0)
             {
-                return false;
+                return Task.FromResult(false);
             }
 
             for (int i = 5; i * i <= number; i += 6)
             {
                 if (number % i == 0 || number % (i + 2) == 0)
                 {
-                    return false;
+                    return Task.FromResult(false);
                 }
             }
 
-            return true;
+            return Task.FromResult(true);
         }
     }
 }

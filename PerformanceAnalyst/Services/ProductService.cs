@@ -1,76 +1,35 @@
 ﻿using PerformanceAnalyst.Dtos;
 using PerformanceAnalyst.Models;
 using PerformanceAnalyst.Repositories;
+using System.Xml;
+using System;
+using HtmlAgilityPack;
 
 namespace PerformanceAnalyst.Services
 {
     public class ProductService : IProductService
     {
-        private readonly IProductRepository _productRepository;
-
-        public ProductService(IProductRepository productRepository)
+        private List<Product> _products = new()
         {
-            _productRepository = productRepository;
-        }
+            new Product { Id = 1, Name = "Iphone 15", Source = "Cell phone" , PriceElement = "18.800.000 VNĐ", Link ="https://cellphones.com.vn/iphone-15.html" },
+            new Product { Id = 2, Name = "Iphone 15", Source = "Thegioididong", PriceElement = "21.490.000 VNĐ", Link = "https://www.thegioididong.com/iphone-15-series?m=-1" },
+            new Product { Id = 3, Name = "Iphone 15", Source = "FPT shop", PriceElement = "22.990.000 VNĐ", Link = "https://fptshop.com.vn/dien-thoai/iphone-15" },
+                    
+        };
 
-        public async Task<List<Product>> GetAsync()
+        public List<Product> GetAsync()
         {
-            var product = await _productRepository.GetAsync();
-
-            return product
-                .GroupBy(_ => _.Sku)
+            return _products
+                .GroupBy(_ => _.Name)
                 .Select(group => group.First())
                 .ToList();
         }
 
-        public async Task<ProductComparisionDto> GetProductDetailsAsync(string sku)
+        public List<Product> GetByNameAsync(string name)
         {
-            var products = await _productRepository.GetBySkuAsync(sku);
-
-            if (products == null)
-                throw new ArgumentException(nameof(sku));
-
-            var prices = new List<ProductPrice>();
-
-            foreach (var product in products)
-            {
-                var htmlContent = await FetchHtmlContentOfPageAsync(product.Link);
-                var price = new ProductPrice()
-                {
-                    Price = await GetPriceAsync(htmlContent, product.PriceElement),
-                    LogoUrl = await GetLogoUrlAsync(htmlContent),
-                    Link = product.Link,
-                    Store = product.Source.ToString(),
-                };
-                prices.Add(price);
-            }
-                    
-
-            return new ProductComparisionDto()
-            {
-                Name = products[0].Name,
-                Sku = products[0].Sku,
-                Prices = prices.ToList()
-            };
+            return _products
+                .Where(_ => _.Name == name)
+                .ToList();
         }
-
-        private Task<string> FetchHtmlContentOfPageAsync(string sourceUrl)
-        {
-            Task.Delay(5000).Wait();
-            return Task.FromResult("");
-        }
-
-        private Task<string> GetPriceAsync(string htmlContent, string priceElement)
-        {
-            Task.Delay(1000);
-            return Task.FromResult(priceElement);
-        }
-
-        private Task<string> GetLogoUrlAsync(string htmlContent)
-        {
-            Task.Delay(1000);
-            return Task.FromResult("");
-        }
-
     }
 }

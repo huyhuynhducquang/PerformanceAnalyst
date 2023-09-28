@@ -5,8 +5,7 @@ namespace PerformanceAnalyst.Services
 {
     public interface IProductService
     {
-        Task<List<Product>> GetAsync();
-
-        Task<ProductComparisionDto> GetProductDetailsAsync(string sku);
+        List<Product> GetAsync();
+        List<Product> GetByNameAsync(string name);
     }
 }

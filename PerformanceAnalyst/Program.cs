@@ -13,7 +13,7 @@ services.AddDbContext<PerformanceDbContext>(
         options => options.UseSqlServer(builder.Configuration.GetConnectionString("PerformanceConnectionString")));
 
 services.AddTransient<IMovieRepository, MovieRepository>();
-services.AddTransient<IProductRepository, ProductRepository>();
+services.AddTransient<IPriceFetcherService, PriceFetcherService>();
 services.AddTransient<IProductService, ProductService>();
 
 services.AddControllersWithViews();

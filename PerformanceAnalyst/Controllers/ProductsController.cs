@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PerformanceAnalyst.Dtos;
+using PerformanceAnalyst.Models;
 using PerformanceAnalyst.Services;
 
 namespace PerformanceAnalyst.Controllers
@@ -6,25 +8,42 @@ namespace PerformanceAnalyst.Controllers
     public class ProductsController : Controller
     {
         private readonly IProductService _productService;
+        private readonly IPriceFetcherService _priceFetcherService;
 
-        public ProductsController(IProductService productService)
+        public ProductsController(IProductService productService, IPriceFetcherService priceFetcherService)
         {
             _productService = productService;
+            _priceFetcherService = priceFetcherService;
         }
 
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _productService.GetAsync());
+            return View(_productService.GetAsync());
         }
 
-        public async Task<IActionResult> Details(string sku)
+        public async Task<IActionResult> Details(string name)
         {
-            var product = await _productService.GetProductDetailsAsync(sku);
+            var startTime = DateTime.Now;
+            var products = _productService.GetByNameAsync(name);
 
-            if (product == null)
-                return NotFound();
+            var prices = new List<ProductPrice>();
 
-            return View(product);
+            foreach (var product in products)
+            {
+                prices.Add(new ProductPrice()
+                {
+                    Store = await _priceFetcherService.GetStoreAsync(product.Source),
+                    Price = await _priceFetcherService.GetPriceAsync(product.Source, product.PriceElement)
+                });
+            }
+            var endTime = DateTime.Now;
+
+            return View(new ProductComparisionDto
+            {
+                Name = name,
+                Prices = prices,
+                TimeToExecute = (endTime - startTime).ToString()
+            });
         }
     }
 }

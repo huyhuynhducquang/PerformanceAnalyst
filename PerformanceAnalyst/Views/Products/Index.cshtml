@@ -9,7 +9,6 @@
     <thead>
         <tr>
             <th>Product Name</th>
-            <th>SKU</th>
             <th></th>
         </tr>
     </thead>
@@ -18,9 +17,8 @@
         {
                 <tr>
                 <td>@product.Name</td>
-                <td>@product.Sku</td>
                     <td>
-                    <a asp-controller="Products" asp-action="Details"asp-route-sku="@product.Sku">Details</a>
+                    <a asp-controller="Products" asp-action="Details"asp-route-name="@product.Name">Details</a>
                     </td>
                 </tr>
         }
